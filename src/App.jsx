@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-import TodoList from './TodoList'; 
+import ResizableBox from './ResizableBox'; 
 
 function App() {
   return (
     <div>
-      <TodoList /> 
+      <ResizableBox />
     </div>
   );
 }
