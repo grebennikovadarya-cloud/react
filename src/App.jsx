@@ -1,59 +1,27 @@
-import { useState } from 'react';
-import './App.css';
-
-let clickCount = 0;
+import React from 'react';
+import './App.css'; 
 
 function App() {
-  const [isHovered, setIsHovered] = useState(false);
-
-  function handleClick() {
-    clickCount++;
-    console.log('Нажатий:', clickCount);
-  }
-
-  function handleChange(event) {
-    console.log('Текущий ввод:', event.target.value);
-  }
-
-  function handleMouseOver() {
-    console.log('Мышь наведена!');
-    setIsHovered(true); 
-  }
-
-  function handleMouseOut() {
-    setIsHovered(false); 
-  }
+  const name = 'Dasha';
+  const profession = 'Frontend-разработчик';
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>Практика событий в React</h1>
+    <div className="card-container">
 
-      <section style={{ marginBottom: '30px' }}>
-        <h2>1. Кнопка-счетчик</h2>
-        <button onClick={handleClick}>Нажми меня</button>
-        <p>Количество нажатий смотрите в консоли</p>
-      </section>
+      <h1 style={{ color: '#2c3e50' }}>Привет, {name}!</h1>
+      
+      <h2>{profession}</h2>
+      
+      <p>
+        Я изучаю React и создаю свои первые интерфейсы. 
+        Мне нравится превращать дизайн в живой код, 
+        делать сайты удобными и красивыми.
+      </p>
+      
+      <div className="quote">
+        "67" 🚀💻
+      </div>
 
-      <section style={{ marginBottom: '30px' }}>
-        <h2>2. Поле ввода</h2>
-        <input 
-          type="text" 
-          placeholder="Введите имя" 
-          onChange={handleChange} 
-        />
-        <p>Смотрите имя в консоли</p>
-      </section>
-
-      <section>
-        <h2>3. Наведение мыши</h2>
-        <div 
-          onMouseOver={handleMouseOver} 
-          onMouseOut={handleMouseOut}
-          className={isHovered ? 'highlight' : ''}
-        >
-          Наведи на меня
-        </div>
-      </section>
     </div>
   );
 }

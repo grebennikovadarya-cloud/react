@@ -1,7 +1,18 @@
-.highlight {
-  background-color: lightblue;
-  padding: 10px;
-  display: inline-block; 
-  margin-top: 10px;
-  border-radius: 4px;
+.card-container {
+  border: 2px solid #3498db; 
+  background-color: #f0f8ff; 
+  padding: 30px;             
+  margin: 20px auto;         
+  max-width: 500px;         
+  border-radius: 12px;       
+  font-family: Arial, sans-serif;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+}
+
+.quote {
+  margin-top: 20px;
+  font-style: italic;
+  font-size: 1.1em;
+  text-align: center;
+  color: #555;
 }
