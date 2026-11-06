@@ -1,13 +1,7 @@
-import React from 'react';
-import './App.css';
-import ResizableBox from './ResizableBox'; 
+import DataFetcherContainer from './DataFetcher';
 
 function App() {
-  return (
-    <div>
-      <ResizableBox />
-    </div>
-  );
+  return <DataFetcherContainer />;
 }
 
 export default App;
