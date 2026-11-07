@@ -1,24 +1,36 @@
 import React from 'react';
-import UserCard from './UserCard'; 
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+
+function Home() {
+  return <h1>Главная страница</h1>;
+}
+function About() {
+  return <h1>О нас</h1>;
+}
+
+function Contacts() {
+  return <h1>Контакты</h1>;
+}
 
 function App() {
-  const usersData = [
-    { id: 1, name: "Анна", age: 25, email: "anna@example.com" },
-    { id: 2, name: "Иван", age: 30, email: "ivan@example.com" },
-    { id: 3, name: "Мария", age: 28, email: "maria@example.com" }
-  ];
-
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h2>Список пользователей</h2>
-      
-      <div>
+    <BrowserRouter>
+      <div style={{ fontFamily: 'sans-serif', padding: '20px' }}>
+        
+        <nav style={{ marginBottom: '20px', display: 'flex', gap: '15px' }}>
+          <Link to="/">Главная</Link>
+          <Link to="/about">О нас</Link>
+          <Link to="/contacts">Контакты</Link>
+        </nav>
 
-        {usersData.map((user) => (
-          <UserCard key={user.id} user={user} />
-        ))}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contacts" element={<Contacts />} />
+        </Routes>
+
       </div>
-    </div>
+    </BrowserRouter>
   );
 }
 
