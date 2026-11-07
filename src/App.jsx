@@ -1,36 +1,55 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import React, { useReducer } from 'react';
+import UserItem from './UserItem';
 
-function Home() {
-  return <h1>Главная страница</h1>;
-}
-function About() {
-  return <h1>О нас</h1>;
-}
+const initialState = [
+  { id: 1, name: 'Иван', active: true },
+  { id: 2, name: 'Мария', active: false },
+  { id: 3, name: 'Алексей', active: true },
+];
 
-function Contacts() {
-  return <h1>Контакты</h1>;
+function usersReducer(state, action) {
+  switch (action.type) {
+    case 'EDIT_NAME':
+      return state.map(user => 
+        user.id === action.payload.id 
+          ? { ...user, name: action.payload.newName } 
+          : user
+      );
+
+    case 'TOGGLE_ACTIVE':
+      return state.map(user => 
+        user.id === action.payload 
+          ? { ...user, active: !user.active } 
+          : user
+      );
+
+    case 'DELETE_USER':
+      return state.filter(user => user.id !== action.payload);
+
+    default:
+      return state;
+  }
 }
 
 function App() {
+  const [users, dispatch] = useReducer(usersReducer, initialState);
+
   return (
-    <BrowserRouter>
-      <div style={{ fontFamily: 'sans-serif', padding: '20px' }}>
+    <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '800px' }}>
+      <h2>Список пользователей (useReducer)</h2>
+      
+      <div style={{ marginTop: '20px' }}>
+        {users.map(user => (
+          <UserItem 
+            key={user.id} 
+            user={user} 
+            dispatch={dispatch} 
+          />
+        ))}
         
-        <nav style={{ marginBottom: '20px', display: 'flex', gap: '15px' }}>
-          <Link to="/">Главная</Link>
-          <Link to="/about">О нас</Link>
-          <Link to="/contacts">Контакты</Link>
-        </nav>
-
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contacts" element={<Contacts />} />
-        </Routes>
-
+        {users.length === 0 && <p>Список пуст.</p>}
       </div>
-    </BrowserRouter>
+    </div>
   );
 }
 
