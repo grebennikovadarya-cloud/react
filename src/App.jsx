@@ -1,17 +1,25 @@
-import React from 'react';
-import ButtonWithCallback from './ButtonWithCallback'; 
+import React, { useState } from 'react';
+import UserStatus from './UserStatus'; 
 
 function App() {
-  
-  const handleClick = (message) => {
-    console.log("Сообщение из дочернего компонента:", message);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const toggleLogin = () => {
+    setIsLoggedIn(!isLoggedIn);
   };
 
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h3>Домашнее задание: Передача callback через props</h3>
+      <h3>Домашнее задание: Условный рендеринг</h3>
       
-      <ButtonWithCallback onButtonClick={handleClick} />
+      <button 
+        onClick={toggleLogin}
+        style={{ padding: '8px 16px', cursor: 'pointer', marginBottom: '20px', backgroundColor: '#e0e0e0', border: '1px solid #999' }}
+      >
+        Переключить статус (Войти / Выйти)
+      </button>
+
+      <UserStatus isLoggedIn={isLoggedIn} />
     </div>
   );
 }
