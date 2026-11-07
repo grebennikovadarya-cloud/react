@@ -1,63 +1,104 @@
-import React, { useState, useCallback } from 'react';
-import TodoItem from './TodoItem';
+import React, { useState } from 'react';
+import HabitItem from './HabitItem';
 
 function App() {
-  const [todos, setTodos] = useState([
-    { id: 1, text: 'Прогулка', completed: false },
-    { id: 2, text: 'Сходить в магазин', completed: true },
-    { id: 3, text: 'Тренировка', completed: false },
+  const [habits, setHabits] = useState([
+    { id: 1, name: 'Пить воду', icon: '💧', completedDays: [0, 1, 2] },
+    { id: 2, name: 'Читать книгу', icon: '📚', completedDays: [0, 3] },
+    { id: 3, name: 'Спорт', icon: '🏃', completedDays: [] },
   ]);
-  const [inputValue, setInputValue] = useState('');
 
-  const handleAdd = () => {
-    if (inputValue.trim() === '') return;
-    
-    const newTodo = {
-      id: Date.now(), 
-      text: inputValue,
-      completed: false
+  const [newName, setNewName] = useState('');
+  const [newIcon, setNewIcon] = useState('⭐');
+
+  const handleAdd = (e) => {
+    e.preventDefault();
+    if (newName.trim() === '') return;
+
+    const newHabit = {
+      id: Date.now(),
+      name: newName,
+      icon: newIcon || '⭐',
+      completedDays: []
     };
-    
-    setTodos([...todos, newTodo]);
-    setInputValue(''); 
+
+    setHabits([...habits, newHabit]);
+    setNewName(''); 
+    setNewIcon('⭐');
   };
 
-  const handleDelete = useCallback((id) => {
-    setTodos((prevTodos) => prevTodos.filter(todo => todo.id !== id));
-  }, []);
+  const handleDelete = (id) => {
+    setHabits(habits.filter(habit => habit.id !== id));
+  };
 
-  const handleToggle = useCallback((id) => {
-    setTodos((prevTodos) => 
-      prevTodos.map(todo => 
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  }, []);
+  const handleEdit = (id, newName, newIcon) => {
+    setHabits(habits.map(habit => 
+      habit.id === id ? { ...habit, name: newName, icon: newIcon } : habit
+    ));
+  };
+
+  const handleToggleDay = (habitId, dayIndex) => {
+    setHabits(habits.map(habit => {
+      if (habit.id === habitId) {
+        const isCompleted = habit.completedDays.includes(dayIndex);
+        return {
+          ...habit,
+          completedDays: isCompleted 
+            ? habit.completedDays.filter(d => d !== dayIndex) 
+            : [...habit.completedDays, dayIndex] 
+        };
+      }
+      return habit;
+    }));
+  };
+
+  const handleReset = () => {
+    if (window.confirm('Вы уверены, что хотите сбросить все отметки?')) {
+      setHabits(habits.map(habit => ({ ...habit, completedDays: [] })));
+    }
+  };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '500px' }}>
-      <h2>Список задач (React.memo)</h2>
+    <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '700px', margin: '0 auto' }}>
+      <h1>Трекер привычек</h1>
       
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+      <p style={{ fontSize: '18px', fontWeight: 'bold' }}>
+        Всего привычек: {habits.length}
+      </p>
+
+      <form onSubmit={handleAdd} style={{ display: 'flex', gap: '10px', marginBottom: '20px', backgroundColor: '#e3f2fd', padding: '15px', borderRadius: '8px' }}>
         <input 
-          type="text" 
-          placeholder="Новая задача" 
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          style={{ padding: '5px', flexGrow: 1 }}
+          value={newIcon} 
+          onChange={(e) => setNewIcon(e.target.value)} 
+          style={{ width: '50px', textAlign: 'center', fontSize: '18px' }}
+          maxLength="2"
+          title="Иконка (эмодзи)"
         />
-        <button onClick={handleAdd} style={{ padding: '5px 15px', cursor: 'pointer' }}>
-          Добавить
+        <input 
+          placeholder="Название привычки..." 
+          value={newName} 
+          onChange={(e) => setNewName(e.target.value)} 
+          style={{ flexGrow: 1, padding: '8px' }}
+        />
+        <button type="submit" style={{ padding: '8px 15px', cursor: 'pointer' }}>Добавить</button>
+      </form>
+
+      <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+        <button onClick={handleReset} style={{ padding: '8px 15px', cursor: 'pointer', backgroundColor: '#ffcdd2' }}>
+          Сбросить все отметки
         </button>
       </div>
 
       <div>
-        {todos.map(todo => (
-          <TodoItem 
-            key={todo.id} 
-            todo={todo} 
+        {habits.length === 0 && <p>У вас пока нет привычек. Добавьте первую!</p>}
+        
+        {habits.map(habit => (
+          <HabitItem 
+            key={habit.id} 
+            habit={habit} 
             onDelete={handleDelete} 
-            onToggle={handleToggle} 
+            onToggleDay={handleToggleDay}
+            onEdit={handleEdit}
           />
         ))}
       </div>
