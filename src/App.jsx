@@ -11,30 +11,39 @@ function App() {
   const [newName, setNewName] = useState('');
   const [newIcon, setNewIcon] = useState('⭐');
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all'); 
+  const [sortType, setSortType] = useState('default'); 
+
   const handleAdd = (e) => {
     e.preventDefault();
     if (newName.trim() === '') return;
-
-    const newHabit = {
-      id: Date.now(),
-      name: newName,
-      icon: newIcon || '⭐',
-      completedDays: []
-    };
-
+    const newHabit = { id: Date.now(), name: newName, icon: newIcon || '⭐', completedDays: [] };
     setHabits([...habits, newHabit]);
-    setNewName(''); 
+    setNewName('');
     setNewIcon('⭐');
   };
 
-  const handleDelete = (id) => {
-    setHabits(habits.filter(habit => habit.id !== id));
+  const handleDelete = (id) => setHabits(habits.filter(h => h.id !== id));
+  
+  const handleEdit = (id, newName, newIcon) => {
+    setHabits(habits.map(h => h.id === id ? { ...h, name: newName, icon: newIcon } : h));
   };
 
-  const handleEdit = (id, newName, newIcon) => {
-    setHabits(habits.map(habit => 
-      habit.id === id ? { ...habit, name: newName, icon: newIcon } : habit
-    ));
+  const handleMove = (id, direction) => {
+    const currentIndex = habits.findIndex(h => h.id === id);
+    if (currentIndex === -1) return;
+
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+
+    if (newIndex < 0 || newIndex >= habits.length) return;
+
+    const newHabits = [...habits];
+    const temp = newHabits[currentIndex];
+    newHabits[currentIndex] = newHabits[newIndex];
+    newHabits[newIndex] = temp;
+
+    setHabits(newHabits);
   };
 
   const handleToggleDay = (habitId, dayIndex) => {
@@ -44,8 +53,8 @@ function App() {
         return {
           ...habit,
           completedDays: isCompleted 
-            ? habit.completedDays.filter(d => d !== dayIndex) 
-            : [...habit.completedDays, dayIndex] 
+            ? habit.completedDays.filter(d => d !== dayIndex)
+            : [...habit.completedDays, dayIndex]
         };
       }
       return habit;
@@ -53,46 +62,87 @@ function App() {
   };
 
   const handleReset = () => {
-    if (window.confirm('Вы уверены, что хотите сбросить все отметки?')) {
+    if (window.confirm('Сбросить все отметки?')) {
       setHabits(habits.map(habit => ({ ...habit, completedDays: [] })));
     }
   };
 
+  const totalPossibleChecks = habits.length * 7;
+  const totalChecks = habits.reduce((sum, habit) => sum + habit.completedDays.length, 0);
+  const progressPercent = totalPossibleChecks === 0 ? 0 : Math.round((totalChecks / totalPossibleChecks) * 100);
+
+  let visibleHabits = [...habits];
+
+  if (searchQuery) {
+    visibleHabits = visibleHabits.filter(h => h.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  }
+
+  if (filterType === 'completed') {
+    visibleHabits = visibleHabits.filter(h => h.completedDays.length > 0);
+  } else if (filterType === 'uncompleted') {
+    visibleHabits = visibleHabits.filter(h => h.completedDays.length === 0);
+  }
+
+  if (sortType === 'az') {
+    visibleHabits.sort((a, b) => a.name.localeCompare(b.name)); 
+  } else if (sortType === 'za') {
+    visibleHabits.sort((a, b) => b.name.localeCompare(a.name)); 
+  }
+
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '700px', margin: '0 auto' }}>
-      <h1>Трекер привычек</h1>
-      
-      <p style={{ fontSize: '18px', fontWeight: 'bold' }}>
-        Всего привычек: {habits.length}
-      </p>
+    <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
+      <h1>Трекер привычек 2.0</h1>
+
+      <div style={{ marginBottom: '20px', background: '#eee', borderRadius: '10px', overflow: 'hidden', height: '25px' }}>
+        <div style={{ 
+          width: `${progressPercent}%`, 
+          backgroundColor: '#4caf50', 
+          height: '100%', 
+          color: 'white', 
+          textAlign: 'center',
+          lineHeight: '25px',
+          transition: 'width 0.3s ease'
+        }}>
+          {progressPercent}%
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap' }}>
+        <input 
+          placeholder="Поиск..." 
+          value={searchQuery} 
+          onChange={(e) => setSearchQuery(e.target.value)} 
+          style={{ padding: '8px', flexGrow: 1 }}
+        />
+        
+        <select value={sortType} onChange={(e) => setSortType(e.target.value)} style={{ padding: '8px' }}>
+          <option value="default">Без сортировки</option>
+          <option value="az">По алфавиту (А-Я)</option>
+          <option value="za">По алфавиту (Я-А)</option>
+        </select>
+
+        <select value={filterType} onChange={(e) => setFilterType(e.target.value)} style={{ padding: '8px' }}>
+          <option value="all">Все</option>
+          <option value="completed">Выполненные</option>
+          <option value="uncompleted">Невыполненные</option>
+        </select>
+      </div>
 
       <form onSubmit={handleAdd} style={{ display: 'flex', gap: '10px', marginBottom: '20px', backgroundColor: '#e3f2fd', padding: '15px', borderRadius: '8px' }}>
-        <input 
-          value={newIcon} 
-          onChange={(e) => setNewIcon(e.target.value)} 
-          style={{ width: '50px', textAlign: 'center', fontSize: '18px' }}
-          maxLength="2"
-          title="Иконка (эмодзи)"
-        />
-        <input 
-          placeholder="Название привычки..." 
-          value={newName} 
-          onChange={(e) => setNewName(e.target.value)} 
-          style={{ flexGrow: 1, padding: '8px' }}
-        />
+        <input value={newIcon} onChange={(e) => setNewIcon(e.target.value)} style={{ width: '50px', textAlign: 'center' }} maxLength="2" />
+        <input placeholder="Название..." value={newName} onChange={(e) => setNewName(e.target.value)} style={{ flexGrow: 1, padding: '8px' }} />
         <button type="submit" style={{ padding: '8px 15px', cursor: 'pointer' }}>Добавить</button>
       </form>
 
-      <div style={{ marginBottom: '20px', textAlign: 'right' }}>
-        <button onClick={handleReset} style={{ padding: '8px 15px', cursor: 'pointer', backgroundColor: '#ffcdd2' }}>
-          Сбросить все отметки
-        </button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <span>Всего привычек: <b>{habits.length}</b></span>
+        <button onClick={handleReset} style={{ cursor: 'pointer', backgroundColor: '#ffcdd2' }}>Сбросить отметки</button>
       </div>
 
       <div>
-        {habits.length === 0 && <p>У вас пока нет привычек. Добавьте первую!</p>}
+        {visibleHabits.length === 0 && <p>Ничего не найдено.</p>}
         
-        {habits.map(habit => (
+        {visibleHabits.map(habit => (
           <HabitItem 
             key={habit.id} 
             habit={habit} 

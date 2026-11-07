@@ -42,10 +42,14 @@ function HabitItem({ habit, onDelete, onToggleDay, onEdit }) {
             {habit.name}
           </h3>
           <div style={{ display: 'flex', gap: '10px' }}>
+            <button onClick={() => onMove(habit.id, 'up')} style={{ cursor: 'pointer' }}>⬆️</button>
+            <button onClick={() => onMove(habit.id, 'down')} style={{ cursor: 'pointer' }}>⬇️</button>
+            <button onClick={() => setIsEditing(true)} style={{ cursor: 'pointer' }}>✏️ Изменить</button>
+            <button onClick={() => onDelete(habit.id)} style={{ cursor: 'pointer', color: 'red' }}>🗑 Удалить</button>
+            </div>
             <button onClick={() => setIsEditing(true)} style={{ cursor: 'pointer' }}>✏️ Изменить</button>
             <button onClick={() => onDelete(habit.id)} style={{ cursor: 'pointer', color: 'red' }}>🗑 Удалить</button>
           </div>
-        </div>
       )}
 
       <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginTop: '15px' }}>
