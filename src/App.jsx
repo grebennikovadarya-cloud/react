@@ -1,25 +1,23 @@
-import React, { useState } from 'react';
-import UserStatus from './UserStatus'; 
+import React from 'react';
+import UserCard from './UserCard'; 
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const toggleLogin = () => {
-    setIsLoggedIn(!isLoggedIn);
-  };
+  const usersData = [
+    { id: 1, name: "Анна", age: 25, email: "anna@example.com" },
+    { id: 2, name: "Иван", age: 30, email: "ivan@example.com" },
+    { id: 3, name: "Мария", age: 28, email: "maria@example.com" }
+  ];
 
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h3>Домашнее задание: Условный рендеринг</h3>
+      <h2>Список пользователей</h2>
       
-      <button 
-        onClick={toggleLogin}
-        style={{ padding: '8px 16px', cursor: 'pointer', marginBottom: '20px', backgroundColor: '#e0e0e0', border: '1px solid #999' }}
-      >
-        Переключить статус (Войти / Выйти)
-      </button>
+      <div>
 
-      <UserStatus isLoggedIn={isLoggedIn} />
+        {usersData.map((user) => (
+          <UserCard key={user.id} user={user} />
+        ))}
+      </div>
     </div>
   );
 }

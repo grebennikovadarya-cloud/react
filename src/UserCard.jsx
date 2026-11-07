@@ -1,21 +1,11 @@
 import React from 'react';
 
-function UserCard({ name, age, color }) {
-  console.log("Рендер UserCard");
-
-  const cardStyle = {
-    backgroundColor: color,
-    padding: '20px',
-    borderRadius: '8px',
-    border: '1px solid #999',
-    width: '250px',
-    marginTop: '20px'
-  };
-
+function UserCard({ user }) {
   return (
-    <div style={cardStyle}>
-      <h3 style={{ margin: '0 0 10px 0' }}>{name}</h3>
-      <p style={{ margin: 0 }}>Возраст: {age}</p>
+    <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '15px', marginBottom: '15px', width: '300px', fontFamily: 'sans-serif' }}>
+      <h3 style={{ margin: '0 0 10px 0' }}>{user.name}</h3>
+      <p style={{ margin: '5px 0' }}>Возраст: {user.age}</p>
+      <p style={{ margin: '5px 0' }}>Email: {user.email}</p>
     </div>
   );
 }
